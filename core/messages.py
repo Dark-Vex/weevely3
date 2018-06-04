@@ -1,4 +1,4 @@
-version = '3.3.1'
+version = '3.6'
 
 class generic:
     file_s_not_found = "File '%s' not found"
@@ -144,7 +144,7 @@ class module_file_upload2web:
     failed_retrieve_info = "Failed retrieve web root information"
     failed_resolve_path = "Failed resolve path, please check remote path and permissions"
     error_s_not_under_webroot_s = "Error, \'%s\' is not under the web root folder \'%s\'"
-    failed_search_writable_starting_s = "Failed search first writable folder starting from '%s'."
+    failed_search_writable_starting_s = "Error searching writable folder under '%s'."
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, check availability'
@@ -247,7 +247,7 @@ class module_shell_sh:
 class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
-    generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
+    generated_backdoor_with_password_s_in_s_size_i = 'Generated \'%s\' with password \'%s\' of %i byte size.'
 
 class utils_code:
     minify_php_missing_binary = 'Missing PHP binary, skipping PHP code minify'
@@ -265,3 +265,10 @@ class module_audit_disablefunctionbypass:
     requests_not_obfuscated = 'Type \'quit\' to return to weevely shell. Requests are not obfuscated'
     cgi_installed_remove_s_s = 'After usage, use \':file_rm\' to remove \'%s\' and \'%s\''
     
+class module_backdoor_metasploit:
+    msfvenom_s_not_found = "Msfvenom '%s' not found, specify with -msfvenom-path"
+    error_payload_s_requires_lhost = 'Error reverse payload \'%s\' requires LHOST, specify with -lhost'
+    make_sure_run_msfconsole = 'Make sure the listener is running on another terminal as below'
+    error_generating_payload = "Error generating meterpreter payload"
+    error_payload_s_requires_shell_use_php = 'Error payload \'%s\' requires remote shell, use PHP payloads instead'
+    error_searching_writable_folder_under_s = "Error searching writable folder under '%s'"

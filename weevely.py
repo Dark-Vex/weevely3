@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from core.terminal import Terminal
 from core.weexceptions import FatalException
 from core.loggers import log, dlog
@@ -27,7 +27,8 @@ def main(arguments):
 
         log.info(
         messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-        (arguments.password, arguments.path, len(obfuscated))
+        (arguments.path,
+        arguments.password, len(obfuscated))
         )
 
         return
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     generateparser.add_argument(
         '-agent', #The agent channel type
         choices = agents_available,
-        default = 'stegaref_php'
+        default = 'obfpost_php'
         )
 
     parser.set_default_subparser('terminal')

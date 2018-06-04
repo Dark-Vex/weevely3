@@ -1,5 +1,33 @@
 # Change Log
 
+## [v3.6] - 2018-06-02
+### Fixed
+- PHP 7 support
+- Add exceptions catches
+
+### Added
+- ObfPost is the default channel to obfuscate traffic in POST requests
+- Travic-CI integration
+
+## [v3.5] - 2017-23-11
+### Fixed
+- Connection to HTTPS sites with wrong certificates
+- Fix net_phpproxy params
+- Fix broken audit_etcpasswd
+- Fix strings passing on SQL console
+
+### Added
+- Dockerized test suite
+
+## [v3.4] - 2016-11-02
+### Fixed
+- Stored/Passed/Default arguments handling
+
+### Added
+- Backdoor_meterpreter module
+- System_procs module by @paddlesteamer
+- Support for database/schema selection for PostgreSQL by @caeaguilar
+
 ## [v3.3.1] - 2016-05-12
 ### Fixed
 - File grep module wrong grepping folders
@@ -77,3 +105,4 @@
 [v3.1.0]: https://github.com/epinna/weevely3/releases/tag/v3.1.0
 [v3.2.0]: https://github.com/epinna/weevely3/releases/tag/v3.2.0
 [v3.3.1]: https://github.com/epinna/weevely3/releases/tag/v3.3.1
+[v3.4]: https://github.com/epinna/weevely3/releases/tag/v3.4

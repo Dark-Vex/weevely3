@@ -1,31 +1,85 @@
 Weevely
 =======
 
-Weevely is a command line web shell dynamically extended over the network at runtime, designed for remote administration and penetration testing. It provides a ssh-like terminal just dropping a PHP script on the target server, even in restricted environments.
+[![Build Status](https://travis-ci.org/epinna/weevely3.svg?branch=master)](https://travis-ci.org/epinna/weevely3)
 
-The low footprint agent and over 30 modules shape an extensible framework to administrate web accounts and post exploit web servers escalating privileges and moving laterally in the network.
+Weevely is a web shell designed for post-exploitation purposes that can be extended over the network at runtime.
 
-**Read the [Wiki](https://github.com/epinna/weevely3/wiki#getting-started) for tutorials and uses cases.**
+Upload weevely PHP agent to a target web server to get remote shell access to it. It has more than 30 modules to assist administrative tasks, maintain access, provide situational awareness, elevate privileges, and spread into the target network.
 
-The modules feature:
+Read the [Install](https://github.com/epinna/weevely3/wiki/Install) page to install weevely and its dependencies.
 
-* Ssh-like terminal
-* Run SQL console pivoting on target
-* Proxy your HTTP traffic pivoting on target
-* Host configurations security auditing
-* Mount target file system locally
-* Conduct network scans pivoting on target
-* File upload and download
+Read the [Getting Started](https://github.com/epinna/weevely3/wiki/Getting-Started) page to generate an agent and connect to it.
+
+Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and use cases.
+
+**Features** 
+
+* Shell access to the target
+* SQL console pivoting on the target
+* HTTP proxy pivoting on the target
+* Upload and download files
 * Spawn reverse and direct TCP shells
-* Bruteforce internal services
-* Manage compressed archives
+* Audit remote target security
+* Run Meterpreter payloads
+* Port scan pivoting on target
+* Mount the remote filesystem
+* Bruteforce SQL accounts pivoting on the target
 
-### The backdoor agent
+**Agent**
 
-The remote agent is a small PHP script which can extend its functionality over the network at run-time. The agent code is polymorphic and hardly detectable by AV and the traffic is obfuscated within the HTTP requests.
+The agent is a small, polymorphic PHP script hardly detected by AV and the communication protocol is obfuscated within HTTP requests.
 
-### Modules development
+**Modules**
 
-Weevely also provides python API to develop your own module to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
+| Module                      | Description
+| --------------------------- | ------------------------------------------ |
+| :audit_filesystem           | Audit the file system for weak permissions.
+| :audit_suidsgid             |  Find files with SUID or SGID flags.
+| :audit_disablefunctionbypass|  Bypass disable_function restrictions with mod_cgi and .htaccess.
+| :audit_etcpasswd            |  Read /etc/passwd with different techniques.
+| :audit_linuxprivchecker     |  Upload and execute linuxprivchecker.
+| :audit_phpconf              |  Audit PHP configuration.
+| :shell_sh                   |  Execute shell commands.
+| :shell_su                   |  Execute commands with su.
+| :shell_php                  |  Execute PHP commands.
+| :system_extensions          |  Collect PHP and webserver extension list.
+| :system_info                |  Collect system information.
+| :system_procs               |  List running processes.
+| :backdoor_reversetcp        |  Execute a reverse TCP shell.
+| :backdoor_tcp               |  Spawn a shell on a TCP port.
+| :backdoor_meterpreter       |  Start a meterpreter session.
+| :bruteforce_sql             |  Bruteforce SQL database.
+| :file_gzip                  |  Compress or expand gzip files.
+| :file_clearlog              |  Remove string from a file.
+| :file_check                 |  Get attributes and permissions of a file.
+| :file_upload                |  Upload file to remote filesystem.
+| :file_webdownload           |  Download an URL.
+| :file_tar                   |  Compress or expand tar archives.
+| :file_download              |  Download file from remote filesystem.
+| :file_bzip2                 |  Compress or expand bzip2 files.
+| :file_edit                  |  Edit remote file on a local editor.
+| :file_grep                  |  Print lines matching a pattern in multiple files.
+| :file_ls                    |  List directory content.
+| :file_cp                    |  Copy single file.
+| :file_rm                    |  Remove remote file.
+| :file_upload2web            |  Upload file automatically to a web folder and get corresponding URL.
+| :file_zip                   |  Compress or expand zip files.
+| :file_touch                 |  Change file timestamp.
+| :file_find                  |  Find files with given names and attributes.
+| :file_mount                 |  Mount remote filesystem using HTTPfs.
+| :file_enum                  |  Check existence and permissions of a list of paths.
+| :file_read                  |  Read remote file from the remote filesystem.
+| :file_cd                    |  Change current working directory.
+| :sql_console                |  Execute SQL query or run console.
+| :sql_dump                   |  Multi dbms mysqldump replacement.
+| :net_mail                   |  Send mail.
+| :net_phpproxy               |  Install PHP proxy on the target.
+| :net_curl                   |  Perform a curl-like HTTP request.
+| :net_proxy                  |  Proxify local HTTP traffic passing through the target.
+| :net_scan                   |  TCP Port scan.
+| :net_ifconfig               |  Get network interfaces addresses.
 
-> If you are a developer or a curious user and desire to contribute, you can to start reading the tutorial [Developing a new module ](https://github.com/epinna/weevely3/wiki/developing-a-new-module) and the [TODO list](https://github.com/epinna/weevely3/issues/1).
+**Development**
+
+Weevely is easily extendible to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.

